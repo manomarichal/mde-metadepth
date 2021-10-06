@@ -1,0 +1,36 @@
+Model FSA {
+  Node alphabet[1]{
+    size : int;
+    minSize : $self.size>0$
+  }
+
+  Node State {
+    name   : String {id};
+    ins     : State[*];
+    outs    : State[*];
+    initial: boolean = false;
+    final  : boolean = false;
+    determ1 : $self.Transitionouts.collect( t | t.symbol).asSet().size()=self.Transitionouts.size()$ // non-repeated symbols
+    determ2 : $alphabet.exists( a | a.size= self.Transitionouts.size())$
+    determ3 : $alphabet.exists( a | self.Transitionouts.forAll( t | t.symbol<a.size))$
+  }
+
+  Edge Transition(State.ins, State.outs) {
+    symbol : int;
+  }
+
+  oneInitial   : $State.allInstances().one(s|s.initial=true)$
+  severalFinal : $State.allInstances().exists(s|s.final=true)$
+}
+
+FSA accept1 {
+  alphabet a{ size = 2; }
+
+  State i { name = "i"; initial = true;}
+  State f { name = "f"; final = true;}
+
+  Transition t1(i,i) {symbol = 0; }
+  Transition t2(i,f) {symbol = 1; }
+  Transition t3(f,f) {symbol = 0; }
+  Transition t4(f,f) {symbol = 1; }
+}
