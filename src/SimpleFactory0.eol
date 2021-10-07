@@ -1,0 +1,2 @@
+current := Machine.select( s | s.name=Arrival1).first();
+('Current State = '+current.name).println();

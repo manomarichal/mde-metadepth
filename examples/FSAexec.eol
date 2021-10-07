@@ -1,0 +1,26 @@
+
+operation main() {
+var input : Sequence(Integer);
+input.addAll(Sequence{0, 0, 1, 1});
+
+('Input word = '+input).println();
+
+var current : State;
+var symb    : Integer;
+var ws      : Integer := 0;
+
+current := State.select( s | s.initial=true).first();
+
+('Current State = '+current.name).println();
+
+while (ws < input.size()) {
+   symb := input.at(ws);
+   ('Considering symbol '+symb).println();
+   ws := ws+1;
+   current := current.Transitionouts.select( t | t.symbol=symb ).first().ins;
+   ('Current State = '+current.name).println();
+}
+
+if (current.final = true) ('The word '+input+' is accepted').println();
+else ('The word '+input+' is rejected').println();
+}

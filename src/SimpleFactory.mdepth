@@ -1,0 +1,42 @@
+
+Model SimpleFactory {
+
+  Node Segment {
+  type : String;
+  input : Segment[*];
+  output : Segment[*];
+  }
+
+  Node Item {
+  type : String;
+  u_id : Integer{id};
+  }
+
+  abstract Node Machine {
+  name : String{id};
+  type : String;
+  ins :Machine[*];
+  outs : Machine[*];
+  items : Item[*];
+  }
+
+  Node Incinerator : Machine {
+  }
+
+  Node CubeArrival : Machine {
+  }
+
+  Edge Straight(Machine.outs, Machine.ins) {
+  }
+
+  Edge Join(Machine.outs, Machine.outs, Machine.ins) {
+  }
+}
+
+SimpleFactory factory1{
+  Item cube1 { type = "Cube"; u_id = 1;}
+  Machine cube_arr_1 { name = "Arrival1";}
+  Incinerator incinerator1 { name = "Incinerator1";}
+
+  Straight t1(cube_arr_1,incinerator) {}
+}
