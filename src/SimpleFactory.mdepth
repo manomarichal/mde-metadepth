@@ -1,23 +1,31 @@
 
 Model SimpleFactory {
 
-  Node Segment {
-  type : String;
-  input : Segment[*];
-  output : Segment[*];
-  }
-
-  Node Item {
-  type : String;
+  abstract Node Item {
   u_id : Integer{id};
   }
 
-  abstract Node Machine {
+  Node Cube : Item {
+
+  }
+
+  Node Sphere : Item {
+
+  }
+
+  abstract Node Segment {
+  item : Item;
+  next : Segment;
+  }
+
+  Node Conveyor : Segment {
+  }
+
+  abstract Node Machine : Segment {
   name : String{id};
-  type : String;
-  ins :Machine[*];
-  outs : Machine[*];
-  items : Item[*];
+  item : Item;
+  next : Machine;
+
   }
 
   Node Incinerator : Machine {
@@ -26,15 +34,10 @@ Model SimpleFactory {
   Node CubeArrival : Machine {
   }
 
-  Edge Straight(Machine.outs, Machine.ins) {
-  }
-
-  Edge Join(Machine.outs, Machine.outs, Machine.ins) {
-  }
 }
 
 SimpleFactory factory1{
-  Item cube1 { type = "Cube"; u_id = 1;}
+  Item cube1 { type = "Cube"; u_id  = 1;}
   Machine cube_arr_1 { name = "Arrival1";}
   Incinerator incinerator1 { name = "Incinerator1";}
 

@@ -1,2 +1,5 @@
 load "src/SimpleFactory.mdepth"
+#EOL
 load "src/SimpleFactory0.eol"
+main()
+#
