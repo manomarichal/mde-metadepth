@@ -1,8 +1,8 @@
 
 Model SimpleFactory {
 
-  abstract Node Item {
-  u_id : Integer{id};
+  Node Item {
+  u_id : int{id};
   }
 
   Node Cube : Item {
@@ -37,9 +37,7 @@ Model SimpleFactory {
 }
 
 SimpleFactory factory1{
-  Item cube1 { type = "Cube"; u_id  = 1;}
-  Machine cube_arr_1 { name = "Arrival1";}
+  Cube cube1 { u_id  = 1;}
+  CubeArrival cube_arr_1 { name = "Arrival1";}
   Incinerator incinerator1 { name = "Incinerator1";}
-
-  Straight t1(cube_arr_1,incinerator) {}
 }

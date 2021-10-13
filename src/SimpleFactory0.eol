@@ -2,25 +2,26 @@ operation Machine process() {}
 
 operation Segment passOn() {
 if (self.next.item == null) {
-self.next.item = self.item
-self.item = null
+self.next.item = self.item;
+self.item = null;
 }
 }
 
 operation Incinerator process() {
-self.item = null
+self.item = null;
 }
 
 operation CubeArrival process(){
-self.item = Cube()
+self.item = Cube();
 }
 
 
 operation main() {
-while (True)
-{
-for (Machine in Machine.select().all()) {
 ('hello world').println();
-}
+while (true)
+{
+  for (m: Machine in Machine.all()) {
+  ('hello world').println();
+  }
 }
 }

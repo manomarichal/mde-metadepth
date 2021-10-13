@@ -1,5 +1,5 @@
-load "src/SimpleFactory.mdepth"
-#EOL
-load "src/SimpleFactory0.eol"
-main()
-#
+debug on
+delete factory1
+delete SimpleFactory
+load "src/SimpleFactory"
+load EOL "src/SimpleFactory0"
