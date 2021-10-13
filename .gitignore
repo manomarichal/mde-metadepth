@@ -1,3 +1,6 @@
-.DS_Store
-metadepth.dsls
-metadepth.properties
+*
+!doc
+!examples
+!src
+!metaDepth.jar
+!test.mdc
