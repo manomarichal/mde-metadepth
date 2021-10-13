@@ -2,7 +2,7 @@
 Model SimpleFactory {
 
   Node Item {
-  u_id : int{id};
+  cereal : int{id};
   }
 
   Node Cube : Item {
@@ -24,7 +24,7 @@ Model SimpleFactory {
   abstract Node Machine : Segment {
   name : String{id};
   item : Item;
-  next : Machine;
+  next : Segment;
 
   }
 
@@ -37,7 +37,7 @@ Model SimpleFactory {
 }
 
 SimpleFactory factory1{
-  Cube cube1 { u_id  = 1;}
-  CubeArrival cube_arr_1 { name = "Arrival1";}
   Incinerator incinerator1 { name = "Incinerator1";}
+  Conveyor conveyor { next = incinerator1;}
+  CubeArrival cube_arr_1 { name = "Arrival1"; next = conveyor;}
 }

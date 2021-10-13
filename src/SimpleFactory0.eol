@@ -1,18 +1,25 @@
 operation Machine process() {}
 
 operation Segment passOn() {
-if (self.next.item == null) {
-self.next.item = self.item;
-self.item = null;
-}
+  ('segment process').println();
+  if (self.next.item == null and self.item != null) {
+    ('passing a cube: ' + self.item.cereal).println();
+    self.next.item = self.item;
+    self.item = null;
+  }
 }
 
 operation Incinerator process() {
-self.item = null;
+  ('incinerator process').println();
+  if (self.item == null) {return;}
+  ('Destroyed a cube: ' + self.item.cereal).println();
+  delete self.item;
 }
 
 operation CubeArrival process(){
-self.item = Cube();
+  ('arrival process').println();
+  self.item = new Cube();
+  ('Created a cube: ' + self.item.cereal).println();
 }
 
 
@@ -21,7 +28,10 @@ operation main() {
 while (true)
 {
   for (m: Machine in Machine.all()) {
-  ('hello world').println();
+    m.process();
+  }
+  for (s: Segment in Segment.all()) {
+    m.passOn();
   }
 }
 }
