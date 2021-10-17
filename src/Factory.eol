@@ -3,10 +3,18 @@
 operation Machine process() {}
 
 operation Segment pass() {
-  if (self.item.isDefined() and self.next.isDefined() and self.next.item.isUndefined()) {
+  if (self.item.isDefined() and self.output.next.isDefined() and self.output.next[self.output.input_nr].isUndefined()) {
     (self.name + ' passing ' + self.item + ' to ' + self.next.name).println();
 
-    self.next.item = self.item;
+    self.output.next[self.output.input_nr]
+    self.item = null;
+  }
+}
+
+operation Straight pass() {
+
+  if (self.next.isKindOf(Assembler) and self.next.isDefined() and self.next.inputs[self.item.number].isUndefined){
+    self.next.inputs[self.item.number] = self.item;
     self.item = null;
   }
 }
@@ -25,8 +33,19 @@ operation ArrivalSphere process() {
     (self.name + ' created ' + self.item).println();
   }
 }
-/*
+
 operation Assembler process() {
+  if (self.cube.isDefined() and self.sphere.isDefined()){
+    self.item = new Assembled(self.cube, self.sphere);
+    self.cube = null;
+    self.sphere = null;
+
+    (self.name + ' combined cube: ' + self.cube + ' and sphere: ' + self.sphere + ' into assembled: ' + self.assembled).println();
+  }
+}
+
+operation Assembler pass() {
+
 }
 operation Inspection process() {
 
@@ -35,7 +54,7 @@ operation Loading process() {
 }
 operation Fixer process() {
 }
-*/
+
 operation Incinerator process() {
   if (self.item.isDefined()){
     (self.name + ' destroying ' + self.item).println();
