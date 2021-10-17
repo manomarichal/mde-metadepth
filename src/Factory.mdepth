@@ -6,20 +6,21 @@ Model Factory {
   abstract Node Item {}
   Node Cube : Item {}
   Node Sphere : Item {}
-  Node Mix : Item (Cube cube, Sphere sphere){}
+  Node Assembled : Item (){}
 
   abstract Node Segment {
     name : String{id};
-    item : Item;
+    item : Item = null;
+    next : Segment[*];
   }
 
-  abstract Node Machine : Segment {next : Conveyor;}
+  abstract Node Machine : Segment {}
   Node ArrivalCube : Machine {}
   Node ArrivalSphere : Machine {}
   Node Assembler : Machine {cube : Cube; sphere : Sphere;}
   Node Inspection : Machine {incinerator : Incinerator; loading : Loading; fixer : Fixer;}
-  Node Loading : Machine {}
   Node Fixer : Machine {}
+  Node Loading : Machine {}
   Node Incinerator : Machine {}
 
   abstract Node Conveyor : Segment {next : Segment;}

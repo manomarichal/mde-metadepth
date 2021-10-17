@@ -28,6 +28,7 @@ operation ArrivalSphere process() {
 operation Assembler process() {
 }
 operation Inspection process() {
+
 }
 operation Loading process() {
 }
