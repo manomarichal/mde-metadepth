@@ -1,2 +1,5 @@
+delete factory
+delete Factory
 load "src/Factory"
 load EOL "src/Factory"
+quit

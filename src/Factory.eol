@@ -25,6 +25,7 @@ operation ArrivalSphere process() {
     (self.name + ' created ' + self.item).println();
   }
 }
+/*
 operation Assembler process() {
 }
 operation Inspection process() {
@@ -34,6 +35,7 @@ operation Loading process() {
 }
 operation Fixer process() {
 }
+*/
 operation Incinerator process() {
   if (self.item.isDefined()){
     (self.name + ' destroying ' + self.item).println();
