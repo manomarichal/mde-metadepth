@@ -1,6 +1,9 @@
 *
-!doc
-!examples
-!src
+!doc/
+!doc/*
+!examples/
+!examples/*
+!src/
+!src/*
 !metaDepth.jar
 !test.mdc

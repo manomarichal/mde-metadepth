@@ -1,0 +1,64 @@
+// items: Item[*] {unique, ordered};
+// enum MyEnum {VALUE1, VALUE2, VALUE3};
+
+Model Factory {
+
+  abstract Node Item {}
+  Node Cube : Item {}
+  Node Sphere : Item {}
+  Node Mix : Item (Cube cube, Sphere sphere){}
+
+  abstract Node Segment {
+    name : String{id};
+    item : Item;
+  }
+
+  abstract Node Machine : Segment {next : Conveyor;}
+  Node ArrivalCube : Machine {}
+  Node ArrivalSphere : Machine {}
+  Node Assembler : Machine {cube : Cube; sphere : Sphere;}
+  Node Inspection : Machine {incinerator : Incinerator; loading : Loading; fixer : Fixer;}
+  Node Loading : Machine {}
+  Node Fixer : Machine {}
+  Node Incinerator : Machine {}
+
+  abstract Node Conveyor : Segment {next : Segment;}
+  Node Straight : Conveyor {}
+  Node Split : Conveyor {left : Segment; right : Segment;}
+  Node Join : Conveyor {items : Item[2];}
+}
+
+Factory factory {
+  Incinerator incinerator1 {}
+  Loading loading1 {name = "Loading 1";}
+  Fixer fixer1 {name = "Fixer 1";}
+  Inspection inspection1 {
+    name = "Inspection 1";
+    incinerator = incinerator1;
+    loading = loading1;
+    fixer = fixer1;
+  }
+  Assembler assembler1 {name = "Assembler 1";}
+  ArrivalCube arrivalCube1 {
+    name = "Cube Arrival 1";
+    next = straight1;
+  }
+  ArrivalSphere arrivalSphere1 {
+    name = "Sphere Arrival 1";
+    next = straight2;
+  }
+
+  Straight straight1 {
+    name = "Straight 1";
+    next = assembler1;
+  }
+  Straight straight2 {
+    name = "Straight 2";
+    next = assembler1;
+  }
+  Join join1 {
+    name = "Join 1";
+
+  }
+
+}

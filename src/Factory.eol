@@ -1,0 +1,61 @@
+// if (x.isDefined())
+
+operation Machine process() {}
+
+operation Segment pass() {
+  if (self.item.isDefined() and self.next.isDefined() and self.next.item.isUndefined()) {
+    (self.name + ' passing ' + self.item + ' to ' + self.next.name).println();
+
+    self.next.item = self.item;
+    self.item = null;
+  }
+}
+
+operation ArrivalCube process(){
+  if (self.item.isUndefined()){
+    self.item = new Cube();
+
+    (self.name + ' created ' + self.item).println();
+  }
+}
+operation ArrivalSphere process() {
+  if (self.item.isUndefined()){
+    self.item = new Sphere();
+
+    (self.name + ' created ' + self.item).println();
+  }
+}
+operation Assembler process() {
+}
+operation Inspection process() {
+}
+operation Loading process() {
+}
+operation Fixer process() {
+}
+operation Incinerator process() {
+  if (self.item.isDefined()){
+    (self.name + ' destroying ' + self.item).println();
+
+    self.item = null;
+  }
+}
+
+operation main() {
+  var step : Integer := 0;
+
+  while (step < 10)
+  {
+      ('===== Step: ' + step + ' =====').println();
+
+      for (m: Machine in Machine.all()) {
+        m.process();
+      }
+
+      for (s: Segment in Segment.all()) {
+        s.pass();
+      }
+
+      step := step + 1;
+  }
+}

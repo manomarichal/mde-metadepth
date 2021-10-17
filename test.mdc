@@ -1,5 +1,2 @@
-debug on
-delete factory1
-delete SimpleFactory
-load "src/SimpleFactory"
-load EOL "src/SimpleFactory0"
+load "src/Factory"
+load EOL "src/Factory"
