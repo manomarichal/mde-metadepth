@@ -1,41 +1,46 @@
 // items: Item[*] {unique, ordered};
 // enum MyEnum {VALUE1, VALUE2, VALUE3};
+// oneWithMyName: $State.allInstances().select(n | n.name = self.name).size() = 1$
 
 Model Factory {
+  //enum ItemCondition {ACCEPT, FIX, DESTROY};
 
   abstract Node Item {}
   Node Cube : Item {}
   Node Sphere : Item {}
-  Node Assembled : Item {}
+  Node Assembled : Item {cube : Cube; sphere : Sphere;}
 
-
-  abstract Node Segment {
-    name : String{id};
-    next : Segment;
-    item : Item=null;
-  }
+  abstract Node Segment {name : String; next : Segment; item : Item = null;}
 
   abstract Node Machine : Segment {}
-  Node Incinerator : Machine {}
-  Node ArrivalSphere : Machine {}
   Node ArrivalCube : Machine {}
-  Node Assembler : Machine {sphere : Sphere; cube : Cube;}
+  Node ArrivalSphere : Machine {}
+  Node Assembler : Machine {cube : Cube; sphere : Sphere;}
+  Node Inspection : Machine {output_accept : Segment; output_fix : Loading; output_destroy : Segment; inspectResult: int;}
+  Node Fixer : Machine {}
+  Node Loading : Machine {stored_items : Item[*];}
+  Node Incinerator : Machine {}
+
   abstract Node Conveyor : Segment {}
   Node Straight : Conveyor {}
+  Node Split : Conveyor {output0 : Segment; output1: Segment; alternate : boolean = true;}
+  Node Join : Conveyor {item2 : Item;}
 }
 
 Factory factory {
-  ArrivalSphere arrivalSphere1 {
-    name = "arrivalSphere1";
-    next = assembler1;
-  }
+  ArrivalCube   arrivalCube   {next = straight1;}
+  ArrivalSphere arrivalSphere {next = straight2;}
+  Assembler     assembler     {next = join;}
+  Inspection    inspection    {output_accept = straight5; output_fix = straight3; output_destroy = incinerator;}
+  Fixer         fixer         {next = straight4;}
+  Loading       loading       {}
+  Incinerator   incinerator   {}
 
-  ArrivalCube arrivalCube1 {
-    name = "arrivalCube1";
-    next = assembler1;
-  }
+  Straight straight1 {next = assembler;}
+  Straight straight2 {next = assembler;}
+  Straight straight3 {next = fixer;}
+  Straight straight4 {next = join;}
+  Straight straight5 {next = loading;}
 
-  Incinerator incinerator1 {name = "incinerator1"; next = null;}
-
-  Assembler assembler1 {name = "assembler1"; next = incinerator1;}
+  Join join {next = inspection;}
 }

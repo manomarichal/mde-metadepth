@@ -2,32 +2,107 @@
 
 operation Machine process() {}
 
+// PASS FUNCTIONS
 operation Segment pass() {
-  if (self.next.isDefined()) {
+  if (self.item.isDefined() and self.next.isDefined()) {
     if (self.next.recieve(self.item)) {
-    ('passing ' + self.item + 'from ' + self.name).println();
-    self.item = null;
+      (self + ' passing ' + self.item + ' to ' + self.next).println();
+      self.item = null;
+    }
+    else {
+      (self + ' cant pass ' + self.item + ' to ' + self.next).println();
     }
   }
 }
 
+operation Join pass() {
+  if (self.item.isDefined() and self.next.isDefined()) {
+    if (self.next.recieve(self.item)) {
+      (self + ' passing ' + self.item + ' to ' + self.next).println();
+      self.item = self.item2;
+      self.item2 = null;
+    }
+    else {
+      (self + ' cant pass ' + self.item + ' to ' + self.next).println();
+    }
+  }
+}
+
+operation Split pass() {
+  if (self.item.isDefined()) {
+    var result : Boolean := false;
+    if (self.alternate) {
+      if (self.output0.isDefined)
+        result := self.outputO.recieve(self.item);
+    }
+    else {
+      if (self.output1.isDefined)
+        result := self.output1.recieve(self.item);
+    }
+    if (result) {
+      (self + ' passing ' + self.item + ' to ' + self.next).println();
+      self.item = null;
+    }
+  }
+}
+
+operation Inspection pass() {
+  if (self.item.isDefined()) {
+    var passed : Boolean := false;
+    if (self.inspectResult = 0 and self.output_accept.isDefined()) {
+      (self + ' inspecting ' + self.item + ', is accepted, passing to ' + self.output_accept).println();
+      passed = self.output_accept.recieve(self.item);
+    }
+    else if (self.inspectResult = 1 and self.output_fix.isDefined()) {
+    (self + ' inspecting ' + self.item + ', needs fixing, passing to ' + self.output_fix).println();
+      passed = self.output_fix.recieve(self.item);
+    }
+    else if (self.inspectResult = 2 and self.output_destroy.isDefined()) {
+    (self + ' inspecting ' + self.item + ', should be destroyed, passing to ' + self.output_destroy).println();
+      passed = self.output_destroy.recieve(self.item);
+    }
+    else {
+    (self + ' cant pass, item not inspected yet').println();
+    }
+    if (passed) {
+      self.item = null;
+    }
+  }
+}
+//RECIEVE FUNCTIONS
 operation Segment recieve(item) {
   if (self.item.isUndefined() and item.isDefined()) {
-    ('recieving ' + item + ' at ' + self.name).println();
+    //(self + ' recieving ' + item).println();
     self.item = item;
     return true;
   }
   return false;
 }
 
+operation Join recieve(item) {
+  var placed := false;
+  if (self.item.isUndefined()) {
+    (self + ' recieving at 0' + item).println();
+    self.item = item;
+    placed := true;
+  }
+  else if (self.item2.isUndefined()) {
+  (self + ' recieving at 1' + item).println();
+    self.item2 = item;
+    placed := true;
+    }
+  return placed;
+}
+
+
 operation Assembler recieve(item) {
   if (item.isTypeOf(Sphere) and self.sphere.isUndefined()) {
-  ('recieving sphere ' + item + ' at ' + self.name).println();
+  //(self + ' recieving sphere: ' + item).println();
     self.sphere = item;
     return true;
   }
   else if (item.isTypeOf(Cube) and self.cube.isUndefined()) {
-  ('recieving cube ' + item + 'at ' + self.name).println();
+  //(self + ' recieving cube: ' + item).println();
     self.cube = item;
     return true;
   }
@@ -36,24 +111,49 @@ operation Assembler recieve(item) {
   }
 }
 
+
 // PROCESS FUNCTIONS
 operation ArrivalSphere process() {
   if (self.item.isUndefined()){
     self.item = new Sphere();
-    (self.name + ' created ' + self.item).println();
+    (self + ' created ' + self.item).println();
   }
 }
 
 operation ArrivalCube process() {
   if (self.item.isUndefined()){
     self.item = new Cube();
-    (self.name + ' created ' + self.item).println();
+    (self + ' created ' + self.item).println();
+  }
+}
+
+operation Inspection process() {
+  var numbers : Sequence = Sequence {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  var number: Integer = numbers.random();
+  if (self.item.isDefined()){
+    if (number < 7) {
+      self.inspectResult = 0;
+    }
+    else if (number < 9) {
+      self.inspectResult = 1;
+    }
+    else {
+      self.inspectResult = 2;
+    }
   }
 }
 
 operation Incinerator process() {
   if (self.item.isDefined()){
-    (self.name + ' destroying ' + self.item).println();
+    (self + ' destroying ' + self.item).println();
+
+    self.item = null;
+  }
+}
+
+operation Loading process() {
+  if (self.item.isDefined()){
+    (self + ' storing ' + self.item).println();
 
     self.item = null;
   }
@@ -73,7 +173,7 @@ operation Assembler process() {
 operation main() {
   var step : Integer := 0;
 
-  while (step < 10)
+  while (step < 1000)
   {
       ('===== Step: ' + step + ' =====').println();
 
