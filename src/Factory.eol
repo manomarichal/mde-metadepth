@@ -3,56 +3,52 @@
 operation Machine process() {}
 
 operation Segment pass() {
-  if (self.item.isDefined() and self.output.next.isDefined() and self.output.next[self.output.input_nr].isUndefined()) {
-    (self.name + ' passing ' + self.item + ' to ' + self.next.name).println();
-
-    self.output.next[self.output.input_nr]
+  if (self.next.isDefined()) {
+    if (self.next.recieve(self.item)) {
+    ('passing ' + self.item + 'from ' + self.name).println();
     self.item = null;
+    }
   }
 }
 
-operation Straight pass() {
+operation Segment recieve(item) {
+  if (self.item.isUndefined() and item.isDefined()) {
+    ('recieving ' + item + ' at ' + self.name).println();
+    self.item = item;
+    return true;
+  }
+  return false;
+}
 
-  if (self.next.isKindOf(Assembler) and self.next.isDefined() and self.next.inputs[self.item.number].isUndefined){
-    self.next.inputs[self.item.number] = self.item;
-    self.item = null;
+operation Assembler recieve(item) {
+  if (item.isTypeOf(Sphere) and self.sphere.isUndefined()) {
+  ('recieving sphere ' + item + ' at ' + self.name).println();
+    self.sphere = item;
+    return true;
+  }
+  else if (item.isTypeOf(Cube) and self.cube.isUndefined()) {
+  ('recieving cube ' + item + 'at ' + self.name).println();
+    self.cube = item;
+    return true;
+  }
+  else {
+  return false;
   }
 }
 
-operation ArrivalCube process(){
-  if (self.item.isUndefined()){
-    self.item = new Cube();
-
-    (self.name + ' created ' + self.item).println();
-  }
-}
+// PROCESS FUNCTIONS
 operation ArrivalSphere process() {
   if (self.item.isUndefined()){
     self.item = new Sphere();
-
     (self.name + ' created ' + self.item).println();
   }
 }
 
-operation Assembler process() {
-  if (self.cube.isDefined() and self.sphere.isDefined()){
-    self.item = new Assembled(self.cube, self.sphere);
-    self.cube = null;
-    self.sphere = null;
-
-    (self.name + ' combined cube: ' + self.cube + ' and sphere: ' + self.sphere + ' into assembled: ' + self.assembled).println();
+operation ArrivalCube process() {
+  if (self.item.isUndefined()){
+    self.item = new Cube();
+    (self.name + ' created ' + self.item).println();
   }
-}
-
-operation Assembler pass() {
-
-}
-operation Inspection process() {
-
-}
-operation Loading process() {
-}
-operation Fixer process() {
 }
 
 operation Incinerator process() {
@@ -62,6 +58,17 @@ operation Incinerator process() {
     self.item = null;
   }
 }
+
+operation Assembler process() {
+  if (self.sphere.isDefined() and self.cube.isDefined()){
+    self.item = new Assembled();
+    (self + ' combined cube: ' + self.sphere + ' and sphere: ' + self.cube + ' into assembled: ' + self.item).println();
+    self.sphere = null;
+    self.cube = null;
+  }
+}
+
+
 
 operation main() {
   var step : Integer := 0;

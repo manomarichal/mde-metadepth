@@ -4,89 +4,38 @@
 Model Factory {
 
   abstract Node Item {}
-  Node Cube : Item {number : int = 0}
-  Node Sphere : Item {number : int = 1}
+  Node Cube : Item {}
+  Node Sphere : Item {}
   Node Assembled : Item {}
+
 
   abstract Node Segment {
     name : String{id};
-    output : Segment;
-    input : Segment;
+    next : Segment;
+    item : Item=null;
   }
 
   abstract Node Machine : Segment {}
   Node Incinerator : Machine {}
-  Node ArrivalCube : Machine {}
   Node ArrivalSphere : Machine {}
-  Node Assembler : Machine {inputs : Item[2];}
-  Node Inspection : Machine {incinerator : Incinerator; loading : Loading; fixer : Fixer;}
-  Node Fixer : Machine {}
-  Node Loading : Machine {}
-
+  Node ArrivalCube : Machine {}
+  Node Assembler : Machine {sphere : Sphere; cube : Cube;}
   abstract Node Conveyor : Segment {}
   Node Straight : Conveyor {}
-  Node Split : Conveyor {left : Segment; right : Segment;}
-  Node Join : Conveyor {items : Item[2];}
 }
 
 Factory factory {
-  ArrivalCube arrivalCube1 {
-    name = "Cube Arrival 1";
-    output = Output(next = straight1; input_nr = 0);
-  }
-
   ArrivalSphere arrivalSphere1 {
-    name = "Sphere Arrival 1";
-    output = Output(next = straight2; input_nr = 0);
+    name = "arrivalSphere1";
+    next = assembler1;
   }
 
-  Straight straight1 {
-    name = "Straight 1";
-    output = Output(next = assembler1; input_nr = 0);
-  }
-  Straight straight2 {
-    name = "Straight 2";
-    output = Output(next = assembler1; input_nr = 1);
+  ArrivalCube arrivalCube1 {
+    name = "arrivalCube1";
+    next = assembler1;
   }
 
-  Assembler assembler1 {
-  name = "Assembler 1";
-  output = Output(next = straight3; input_nr = 0);
-  }
+  Incinerator incinerator1 {name = "incinerator1"; next = null;}
 
-  Straight straight3 {
-    name = "Straight 3";
-    output = Output(next = incinerator; input_nr = 0);
-  }
-
-  Incinerator incinerator1 {}
-
-
-
-/*
-  Straight straight4 {
-    name = "Straight 4";
-    next = join1;
-  }
-  Straight straight5 {
-    name = "Straight 4";
-    next = loading1;
-  }
-
-  Join join1 {
-    name = "Join 1";
-
-  }
-
-  Loading loading1 {name = "Loading 1";}
-
-  Fixer fixer1 {name = "Fixer 1";}
-
-  Inspection inspection1 {
-    name = "Inspection 1";
-    incinerator = incinerator1;
-    loading = loading1;
-    fixer = fixer1;
-  }
-  */
+  Assembler assembler1 {name = "assembler1"; next = incinerator1;}
 }
