@@ -153,8 +153,8 @@ operation Incinerator process() {
 
 operation Loading process() {
   if (self.item.isDefined()){
-    (self + ' storing ' + self.item).println();
-
+    (self + ' storing ' + self.item + ', currently ' + self.stored_items.size() + ' items stored').println();
+    self.stored_items.add(self.item);
     self.item = null;
   }
 }
@@ -173,7 +173,7 @@ operation Assembler process() {
 operation main() {
   var step : Integer := 0;
 
-  while (step < 1000)
+  while (step < 10)
   {
       ('===== Step: ' + step + ' =====').println();
 

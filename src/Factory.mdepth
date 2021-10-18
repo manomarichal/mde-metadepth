@@ -31,7 +31,7 @@ Factory factory {
   ArrivalCube   arrivalCube   {next = straight1;}
   ArrivalSphere arrivalSphere {next = straight2;}
   Assembler     assembler     {next = join;}
-  Inspection    inspection    {output_accept = straight5; output_fix = straight3; output_destroy = incinerator;}
+  Inspection    inspection    {output_accept = straight5; output_fix = straight3; output_destroy : incinerator;}
   Fixer         fixer         {next = straight4;}
   Loading       loading       {}
   Incinerator   incinerator   {}
