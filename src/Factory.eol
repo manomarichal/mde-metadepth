@@ -24,12 +24,14 @@ operation Split pass() {
       if (self.next_left.isDefined() and self.next_left.recieve(self.item)) {
         (self.name + ' passed ' + self.item + ' to ' + self.next_left.name).println();
         self.item = null;
+        self.left = false;
       }
     }
     else {
       if (self.next_right.isDefined() and self.next_right.recieve(self.item)) {
         (self.name + ' passed ' + self.item + ' to ' + self.next_right.name).println();
         self.item = null;
+        self.left = true;
       }
     }
   }
@@ -143,7 +145,7 @@ operation Assembler process() {
   if (self.sphere.isDefined() and self.cube.isDefined()){
     self.item = new AssembledItem();
 
-    (self + ' combined cube: ' + self.sphere + ' and sphere: ' + self.cube + ' into assembled: ' + self.item).println();
+    (self.name + ' combined cube: ' + self.sphere + ' and sphere: ' + self.cube + ' into assembled: ' + self.item).println();
 
     self.sphere = null;
     self.cube = null;
@@ -188,7 +190,7 @@ operation main() {
   var step : Integer = 0;
   var quota : Integer = 0;
 
-  while (quota < 3)
+  while (quota < 11)
   {
       ('===== Step: ' + step + ' =====').println();
 

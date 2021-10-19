@@ -63,10 +63,10 @@ Model Factory imports Schedule {
     queue : Item[0..1];
   }
 
-  constraint_alloperated : $Operator.collect(o | o.timetable).collect(t | t.machine).asSet().size() = Machine.collect(m | m.name).asSet().size()$
+  constraint_alloperated : $Operator.collect(o | o.timetable).collect(t | t.machine).flatten().asSet().size() = Machine.collect(m | m.name).asSet().size()$
 }
 
-Factory factory {
+Factory factory1 {
   Timetable t1 {
     operator = "Ege";
     machine = ["Arrivalcube", "Arrivalsphere", "Assembler", "Inspection"];
@@ -122,5 +122,192 @@ Factory factory {
   Straight straight4 {name = "Straight 4"; next = join;}
   Straight straight5 {name = "Straight 5"; next = loading;}
 
-  Join join {name = "Join 1"; next = inspection;}
+  Join join {name = "Join"; next = inspection;}
+}
+
+Factory factory2 {
+  Timetable t1 {
+    operator = "Ege";
+    machine = ["Arrivalcube1", "Arrivalsphere1", "Assembler1", "Inspection"];
+    duration = [1, 2, 3, 4];
+  }
+  Timetable t2 {
+    operator = "Mano";
+    machine = ["Inspection", "Fixer", "Loading", "Incinerator1"];
+    duration = [1, 2, 1, 2];
+  }
+  Timetable t3 {
+    operator = "Randy";
+    machine = ["Arrivalcube2", "Arrivalsphere2", "Loading", "Incinerator2"];
+    duration = [1, 1, 1, 1];
+  }
+  Timetable t4 {
+    operator = "Hans";
+    machine = ["Arrivalcube1", "Fixer", "Assembler2", "Inspection"];
+    duration = [3, 3, 3, 3];
+  }
+
+  Operator w1 {
+    name = "Ege";
+    timetable = t1;
+  }
+  Operator w2 {
+    name = "Mano";
+    timetable = t2;
+  }
+  Operator w3 {
+    name = "Randy";
+    timetable = t3;
+  }
+  Operator w4 {
+    name = "Hans";
+    timetable = t4;
+  }
+
+  ArrivalCube arrivalCube1 {
+    name = "Arrivalcube1";
+    next = straight1;
+  }
+  ArrivalCube arrivalCube2 {
+    name = "Arrivalcube2";
+    next = straight2;
+  }
+  ArrivalSphere arrivalSphere1 {
+    name = "Arrivalsphere1";
+    next = straight3;
+  }
+  ArrivalSphere arrivalSphere2 {
+    name = "Arrivalsphere2";
+    next = straight4;
+  }
+  Assembler assembler1 {
+    name = "Assembler1";
+    next = join;
+  }
+  Assembler assembler2 {
+    name = "Assembler2";
+    next = join;
+  }
+  Inspection inspection {
+    name = "Inspection";
+    next_fix = straight5;
+    next_accept = straight6;
+    next_destroy = split;
+  }
+  Fixer fixer {
+    name = "Fixer";
+    next = straight7;
+  }
+  Loading loading {
+    name = "Loading";
+  }
+  Incinerator incinerator1 {
+    name = "Incinerator1";
+  }
+  Incinerator incinerator2 {
+    name = "Incinerator2";
+  }
+
+  Straight straight1 {name = "Straight 1"; next = assembler1;}
+  Straight straight2 {name = "Straight 2"; next = assembler2;}
+  Straight straight3 {name = "Straight 3"; next = assembler1;}
+  Straight straight4 {name = "Straight 4"; next = assembler2;}
+  Straight straight5 {name = "Straight 5"; next = fixer;}
+  Straight straight6 {name = "Straight 6"; next = loading;}
+  Straight straight7 {name = "Straight 7"; next = inspection;}
+
+  Join join {name = "Join"; next = inspection;}
+
+  Split split {name = "Split"; next_left = incinerator1; next_right = incinerator2;}
+}
+
+Factory invalid {
+  Timetable t1 {
+    operator = "Randy";
+    duration = [1, 1, 1, 1];
+  }
+  Timetable t2 {
+    operator = "Hans";
+    machine = ["Arrivalcube1", "Fixer", "Assembler2", "Inspection"];
+  }
+  Timetable t3 {
+    operator = "Randy";
+    machine = ["Arrivalcube2", "Arrivalsphere2", "Loading", "Incinerator2"];
+    duration = [1, 1];
+  }
+  Timetable t4 {
+    operator = "Hans";
+    machine = ["Arrivalcube1", "Fixer"];
+    duration = [3, 3, 3, 3];
+  }
+
+  Operator w1 {
+    name = "Hans";
+    timetable = t1;
+  }
+  Operator w2 {
+    name = "Randy";
+    timetable = t2;
+  }
+  Operator w3 {
+    name = "Randy";
+    timetable = t3;
+  }
+  Operator w4 {
+    name = "Hans";
+    timetable = t4;
+  }
+
+  ArrivalCube arrivalCube1 {
+    name = "Arrivalcube";
+    next = straight1;
+  }
+  ArrivalCube arrivalCube2 {
+    name = "Arrivalcube";
+    next = straight2;
+  }
+  ArrivalSphere arrivalSphere1 {
+    name = "arrivalsphere1";
+    next = straight3;
+  }
+  ArrivalSphere arrivalSphere2 {
+    name = "arrivalsphere2";
+    next = straight4;
+  }
+  Assembler assembler1 {
+    name = "a";
+    next = join;
+  }
+  Assembler assembler2 {
+    name = "b";
+    next = join;
+  }
+  Inspection inspection {
+    name = "";
+  }
+  Fixer fixer {
+    name = "1";
+    next = straight7;
+  }
+  Loading loading {
+    name = "1";
+  }
+  Incinerator incinerator1 {
+    name = "IncineraTor2";
+  }
+  Incinerator incinerator2 {
+    name = "IncineratOr2";
+  }
+
+  Straight straight1 {name = "Straight 1"; next = assembler1;}
+  Straight straight2 {name = "Straight 2"; next = assembler1;}
+  Straight straight3 {name = "Straight 3"; next = assembler1;}
+  Straight straight4 {name = "Straight 4"; next = assembler1;}
+  Straight straight5 {name = "Straight 5"; next = fixer;}
+  Straight straight6 {name = "Straight 6"; next = loading;}
+  Straight straight7 {name = "Straight 7"; next = inspection;}
+
+  Join join {name = "Join"; next = inspection;}
+
+  Split split {name = "Split"; next_left = incinerator1; next_right = incinerator2;}
 }
