@@ -21,13 +21,13 @@ Model Factory imports Schedule {
   Node Sphere : Item {}
   Node Assembled : Item {cube : Cube; sphere : Sphere;}
 
-  abstract Node Segment {name : String{id}; next : Segment; item : Item = null;}
+  abstract Node Segment {name : String{id}; next : Segment[0..1]; item : Item[0..1];}
 
   abstract Node Machine : Segment {enable : boolean = false; constraint_name : $self.name.matches("[A-Z][a-z]*[0-9]*")$}
   Node ArrivalCube : Machine {}
   Node ArrivalSphere : Machine {}
-  Node Assembler : Machine {cube : Cube; sphere : Sphere;}
-  Node Inspection : Machine {output_accept : Segment; output_fix : Segment; output_destroy : Segment; inspectResult: int;}
+  Node Assembler : Machine {cube : Cube[0..1]; sphere : Sphere[0..1];}
+  Node Inspection : Machine {output_accept : Segment; output_fix : Segment; output_destroy : Segment; inspectResult: int[0..1];}
   Node Fixer : Machine {}
   Node Loading : Machine {stored_items : Item[*];}
   Node Incinerator : Machine {}
@@ -35,7 +35,7 @@ Model Factory imports Schedule {
   abstract Node Conveyor : Segment {}
   Node Straight : Conveyor {}
   Node Split : Conveyor {output0 : Segment; output1: Segment; alternate : boolean = true;}
-  Node Join : Conveyor {item2 : Item;}
+  Node Join : Conveyor {item2 : Item[0..1];}
 }
 
 Factory factory {

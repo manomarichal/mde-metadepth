@@ -194,7 +194,7 @@ operation Worker step() {
 operation main() {
   var step : Integer := 0;
 
-  while (step < 100)
+  while (step < 10)
   {
       ('===== Step: ' + step + ' =====').println();
 
