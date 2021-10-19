@@ -1,5 +1,8 @@
 delete factory
 delete Factory
+delete Schedule
+
 load "src/Factory"
+verify
+
 load EOL "src/Factory"
-quit

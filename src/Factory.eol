@@ -6,11 +6,11 @@ operation Machine process() {}
 operation Segment pass() {
   if (self.item.isDefined() and self.next.isDefined()) {
     if (self.next.recieve(self.item)) {
-      (self + ' passing ' + self.item + ' to ' + self.next).println();
+      (self.name + ' passing ' + self.item + ' to ' + self.next).println();
       self.item = null;
     }
     else {
-      (self + ' cant pass ' + self.item + ' to ' + self.next).println();
+      (self.name + ' cant pass ' + self.item + ' to ' + self.next).println();
     }
   }
 }
@@ -30,13 +30,13 @@ operation Join pass() {
 
 operation Split pass() {
   if (self.item.isDefined()) {
-    var result : Boolean := false;
+    var result : Boolean = false;
     if (self.alternate) {
-      if (self.output0.isDefined)
+      if (self.output0.isDefined())
         result := self.outputO.recieve(self.item);
     }
     else {
-      if (self.output1.isDefined)
+      if (self.output1.isDefined())
         result := self.output1.recieve(self.item);
     }
     if (result) {
@@ -69,10 +69,10 @@ operation Inspection pass() {
     }
   }
 }
+
 //RECIEVE FUNCTIONS
 operation Segment recieve(item) {
   if (self.item.isUndefined() and item.isDefined()) {
-    //(self + ' recieving ' + item).println();
     self.item = item;
     return true;
   }
@@ -97,40 +97,40 @@ operation Join recieve(item) {
 
 operation Assembler recieve(item) {
   if (item.isTypeOf(Sphere) and self.sphere.isUndefined()) {
-  //(self + ' recieving sphere: ' + item).println();
     self.sphere = item;
     return true;
   }
   else if (item.isTypeOf(Cube) and self.cube.isUndefined()) {
-  //(self + ' recieving cube: ' + item).println();
     self.cube = item;
     return true;
   }
   else {
-  return false;
+    return false;
   }
 }
 
 
 // PROCESS FUNCTIONS
 operation ArrivalSphere process() {
-  if (self.item.isUndefined()){
+  if (self.item.isUndefined() and self.enable){
     self.item = new Sphere();
     (self + ' created ' + self.item).println();
+    self.enable = false;
   }
 }
 
 operation ArrivalCube process() {
-  if (self.item.isUndefined()){
+  if (self.item.isUndefined() and self.enable){
     self.item = new Cube();
     (self + ' created ' + self.item).println();
+    self.enable = false;
   }
 }
 
 operation Inspection process() {
   var numbers : Sequence = Sequence {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
   var number: Integer = numbers.random();
-  if (self.item.isDefined()){
+  if (self.item.isDefined() and self.enable){
     if (number < 7) {
       self.inspectResult = 0;
     }
@@ -144,7 +144,7 @@ operation Inspection process() {
 }
 
 operation Incinerator process() {
-  if (self.item.isDefined()){
+  if (self.item.isDefined() and self.enable){
     (self + ' destroying ' + self.item).println();
 
     self.item = null;
@@ -152,19 +152,40 @@ operation Incinerator process() {
 }
 
 operation Loading process() {
-  if (self.item.isDefined()){
+  if (self.item.isDefined() and self.enable){
     (self + ' storing ' + self.item + ', currently ' + self.stored_items.size() + ' items stored').println();
     self.stored_items.add(self.item);
     self.item = null;
+    self.enable = false;
   }
 }
 
 operation Assembler process() {
-  if (self.sphere.isDefined() and self.cube.isDefined()){
+  if (self.sphere.isDefined() and self.cube.isDefined() and self.enable){
     self.item = new Assembled();
     (self + ' combined cube: ' + self.sphere + ' and sphere: ' + self.cube + ' into assembled: ' + self.item).println();
     self.sphere = null;
     self.cube = null;
+    self.enable = false;
+  }
+}
+
+operation Worker step() {
+  if (self.timetable.time = 0) {
+
+    self.timetable.index = self.timetable.index + 1;
+    if (self.timetable.index = self.timetable.machine.size()){
+      self.timetable.index = 0;
+    }
+
+    self.timetable.time = self.timetable.duration.at(self.timetable.index);
+    (Machine.all().selectOne(m|m.name = self.timetable.machine.at(self.timetable.index))).enable = true;
+    (self.name + ' is moving to ' + self.timetable.machine.at(self.timetable.index)).println();
+  }
+  else {
+    self.timetable.time = self.timetable.time - 1;
+    (self.name + ' is working on ' + self.timetable.machine.at(self.timetable.index) + ' for ' + self.timetable.time).println();
+
   }
 }
 
@@ -173,9 +194,13 @@ operation Assembler process() {
 operation main() {
   var step : Integer := 0;
 
-  while (step < 10)
+  while (step < 100)
   {
       ('===== Step: ' + step + ' =====').println();
+
+      for (w: Worker in Worker.all()){
+        w.step();
+      }
 
       for (m: Machine in Machine.all()) {
         m.process();

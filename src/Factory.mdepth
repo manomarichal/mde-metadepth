@@ -1,22 +1,33 @@
 // items: Item[*] {unique, ordered};
 // enum MyEnum {VALUE1, VALUE2, VALUE3};
 // oneWithMyName: $State.allInstances().select(n | n.name = self.name).size() = 1$
+Model Schedule {
+  Node Timetable {
+    operator : String;
+    machine : String[1..*];
+    duration : String[1..*];
+    index : int = 0;
+    time : int = 0;
+    constraint_sync : $self.machine.size() = self.duration.size()$
+  }
+}
 
-Model Factory {
+Model Factory imports Schedule {
   //enum ItemCondition {ACCEPT, FIX, DESTROY};
+  Node Worker {name : String{id}; timetable : Timetable; constraint_match : $self.name = self.timetable.operator$}
 
   abstract Node Item {}
   Node Cube : Item {}
   Node Sphere : Item {}
   Node Assembled : Item {cube : Cube; sphere : Sphere;}
 
-  abstract Node Segment {name : String; next : Segment; item : Item = null;}
+  abstract Node Segment {name : String{id}; next : Segment; item : Item = null;}
 
-  abstract Node Machine : Segment {}
+  abstract Node Machine : Segment {enable : boolean = false; constraint_name : $self.name.matches("[A-Z][a-z]*[0-9]*")$}
   Node ArrivalCube : Machine {}
   Node ArrivalSphere : Machine {}
   Node Assembler : Machine {cube : Cube; sphere : Sphere;}
-  Node Inspection : Machine {output_accept : Segment; output_fix : Loading; output_destroy : Segment; inspectResult: int;}
+  Node Inspection : Machine {output_accept : Segment; output_fix : Segment; output_destroy : Segment; inspectResult: int;}
   Node Fixer : Machine {}
   Node Loading : Machine {stored_items : Item[*];}
   Node Incinerator : Machine {}
@@ -28,19 +39,34 @@ Model Factory {
 }
 
 Factory factory {
-  ArrivalCube   arrivalCube   {next = straight1;}
-  ArrivalSphere arrivalSphere {next = straight2;}
-  Assembler     assembler     {next = join;}
-  Inspection    inspection    {output_accept = straight5; output_fix = straight3; output_destroy : incinerator;}
-  Fixer         fixer         {next = straight4;}
-  Loading       loading       {}
-  Incinerator   incinerator   {}
+Timetable t1 {
+  operator = "Ege";
+  machine = ["Arrivalcube", "Arrivalsphere", "Assembler"];
+  duration = [2, 1, 3];
+}
+Timetable t2 {
+  operator = "Mano";
+  machine = ["Inspection", "Fixer", "Loading", "Incinerator"];
+  duration = [1, 1, 1, 2];
+}
 
-  Straight straight1 {next = assembler;}
-  Straight straight2 {next = assembler;}
-  Straight straight3 {next = fixer;}
-  Straight straight4 {next = join;}
-  Straight straight5 {next = loading;}
+Worker w1 {name = "Ege"; timetable = t1;}
+Worker w2 {name = "Mano"; timetable = t2;}
 
-  Join join {next = inspection;}
+
+ArrivalCube   arrivalCube   {name = "Arrivalcube";   next = straight1;}
+ArrivalSphere arrivalSphere {name = "Arrivalsphere"; next = straight2;}
+Assembler     assembler     {name = "Assembler";      next = join;}
+Inspection    inspection    {name = "Inspection";     output_fix = straight3; output_accept = straight5; output_destroy = incinerator;}
+Fixer         fixer         {name = "Fixer";          next = straight4;}
+Loading       loading       {name = "Loading";}
+Incinerator   incinerator   {name = "Incinerator";}
+
+Straight straight1 {name = "Straight 1"; next = assembler;}
+Straight straight2 {name = "Straight 2"; next = assembler;}
+Straight straight3 {name = "Straight 3"; next = fixer;}
+Straight straight4 {name = "Straight 4"; next = join;}
+Straight straight5 {name = "Straight 5"; next = loading;}
+
+Join join {name = "Join 1"; next = inspection;}
 }
